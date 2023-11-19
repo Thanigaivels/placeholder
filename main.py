@@ -3,7 +3,7 @@ from Scraper import Reddit
 
 def main():
     config = {
-        'id': '32isim'
+        'profile': 'viral_videos'
     }
     obj = Reddit.RedditScraper(config)
     obj.test()
