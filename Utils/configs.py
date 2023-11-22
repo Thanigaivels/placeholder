@@ -14,3 +14,17 @@ def get_profile_config(profile):
         "niche": "cute"
     }
     return profile_config
+
+
+def get_details_for_scraping():
+    scraping_info = {
+        "aww": {
+            "no_of_posts": 2,
+            "niche": "cute"
+        },
+        "memes": {
+            "no_of_posts": 2,
+            "niche": "funny"
+        }
+    }
+    return scraping_info
