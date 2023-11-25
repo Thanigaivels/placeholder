@@ -1,7 +1,11 @@
+import json
 import sys
 import time
 
 import praw
+
+from Utils import storage_handler
+
 
 class RedditScraper:
     def __init__(self, auth):
@@ -21,6 +25,7 @@ class RedditScraper:
 
     def start_scraping(self, scrapping_info):
         for subreddit_name, info in scrapping_info.items():
+            print(f"Scraping content from {subreddit_name}\n")
             subreddit = self.client.subreddit(subreddit_name)
             thread_list = subreddit.top(time_filter="day", limit=5)
             curr_reddit_posts = []
@@ -33,7 +38,7 @@ class RedditScraper:
                         "content": ["blah"]
                     }
                     upload_type = "story"
-                elif post_obj.domain == 'post_obj.redd.it' and 'gif' not in post_obj.url:  # image
+                elif post_obj.domain == 'i.redd.it' and 'gif' not in post_obj.url:  # image
                     link_attr = {
                         "type": "image",
                         "content": [post_obj.url],
@@ -45,7 +50,8 @@ class RedditScraper:
                     link_attr = {
                         "type": "reel",
                         "content": [post_obj.media["reddit_video"]["fallback_url"],
-                                    post_obj.media["reddit_video"]["fallback_url"].split("DASH_")[0] + "DASH_AUDIO_128.mp4"],
+                                    post_obj.media["reddit_video"]["fallback_url"].split("DASH_")[0] +
+                                    "DASH_AUDIO_128.mp4"],
                         "width": 720,
                         "height": 1280,
                         "duration": post_obj.media["reddit_video"]["duration"]
@@ -57,17 +63,19 @@ class RedditScraper:
                         "content": [post_obj.url]
                     }
                     upload_type = "carousel"
-                caption = f"\n\n\nFollow Us for more exciting content @gommala\n\nCredit: r/{subreddit_name}\nNot a owned content\n\nPING US FOR CREDIT OR REMOVAL\n\nHashtags"
+                caption = f"\n\n\nFollow Us for more exciting content @gommala\n\n" \
+                          f"Credit: r/{subreddit_name}\n\nPING US FOR CREDIT OR REMOVAL\n\nHashtags below\n.\n.\n.\n"
                 post_obj.comment_sort = 'top'
                 post_obj.comment_limit = 5
                 for top_level_comment in post_obj.comments:
                     if str(top_level_comment.__class__) == "<class 'praw.models.reddit.comment.Comment'>" and 200 > len(
                             top_level_comment.body) > 15 and 'http' not in top_level_comment.body:
                         caption = str(top_level_comment.body) + caption
-                curr_post = (self.source, post_obj.id, post_obj.url, link_attr, caption, post_obj.title, upload_type,
-                               int(time.time()), post_obj.created, subreddit_name, None)
+                curr_post = (self.source, post_obj.id, post_obj.url, json.dumps(link_attr), caption,
+                             post_obj.title, upload_type, int(time.time()), post_obj.created, subreddit_name, None)
                 curr_reddit_posts.append(curr_post)
             # write_to_db
+            storage_handler.insert_scraped_data(curr_reddit_posts)
 
     def test(self):
         print(self.client)
