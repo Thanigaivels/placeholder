@@ -163,3 +163,5 @@ cython_debug/
 
 rough.py
 *.json
+
+cache/
