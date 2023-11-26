@@ -71,6 +71,7 @@ class RedditScraper:
                     if str(top_level_comment.__class__) == "<class 'praw.models.reddit.comment.Comment'>" and 200 > len(
                             top_level_comment.body) > 15 and 'http' not in top_level_comment.body:
                         caption = str(top_level_comment.body) + caption
+                        break
                 curr_post = (self.source, post_obj.id, post_obj.url, json.dumps(link_attr), caption,
                              post_obj.title, upload_type, int(time.time()), post_obj.created, subreddit_name, None)
                 curr_reddit_posts.append(curr_post)

@@ -1,6 +1,10 @@
 def get_reddit_auth():
     auth_dict = {
-    # auth goes here
+        "client_id": 'RYo0LnHrepjPvwVyLy2Vlg',
+        "client_secret": 'N8hX8aDIhozbCe5hqIDNiPqG3gn-gw',
+        "user_agent": 'RedditBot-v1.0',
+        "username": 'Which_Function_4202',
+        "password": 'SaraNyAA@'
     }
     return auth_dict
 
