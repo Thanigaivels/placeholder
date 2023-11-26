@@ -9,7 +9,7 @@ db_params = {
     'database': 'postgres',
     'user': 'postgres',
     'password': 'root',
-    'port': '5432'
+    'port': '5433'
 }
 
 connection, cursor = None, None
@@ -50,10 +50,43 @@ def insert_scraped_data(records):
                        """ON CONFLICT ("sourceID") DO NOTHING""")
         connection.commit()
         print("Write to DB is successful")
+        return True
     except psycopg2.Error as e:
         print(f"""{traceback.format_exc()}\n::\n{e}""")
     except Exception as e:
         print("Error when writing to DB(Not a psycopg2 error)\n ", e)
+    finally:
+        cursor.close()
+        connection.close()
+
+def fetch_post_data():
+    global connection, cursor
+    connection = get_connection()
+    try:
+        cursor = connection.cursor()
+        print("Connection established with DB.")
+        query = "SELECT \"autoID\",\r\n\tSOURCE,\r\n\t\"sourceID\",\r\n\tLINK,\r\n\t\"linkAttributes\",\r\n\tCAPTION,\r\n\tTITLE,\r\n\t\"uploadType\",\r\n\t\"scrappedTime\",\r\n\t\"createdTime\",\r\n\t\"ownerInfo\",\r\n\t\"jobStatus\"\r\nFROM PUBLIC.\"postData\" where \"jobStatus\" is null;"
+        cursor.execute(query)
+        result = cursor.fetchone()
+        return result
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        connection.close()
+
+def update_job_status(id, status='Completed'):
+    global connection, cursor
+    connection = get_connection()
+    try:
+        cursor = connection.cursor()
+        print("Gonna update job status.")
+        query = "UPDATE PUBLIC.\"postData\"\r\nSET \"jobStatus\" = \'{0}\'\r\nWHERE \"autoID\" = {1} ;".format(status, id)
+        cursor.execute(query)
+        connection.commit()
+        return True
+    except Exception as e:
+        print(e)
     finally:
         cursor.close()
         connection.close()

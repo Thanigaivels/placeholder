@@ -2,6 +2,7 @@ import argparse
 
 from Scraper import Reddit
 from Utils import configs
+from DataHandler import Editor
 
 
 def startRedditScraper():
@@ -34,7 +35,7 @@ def main():
     if user_input.scrape:
         startRedditScraper()
     else:
-        pass
+        Editor.start_upload()
 
 
 if __name__ == '__main__':

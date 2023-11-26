@@ -8,6 +8,14 @@ def get_reddit_auth():
     }
     return auth_dict
 
+def get_insta_profile(profile):
+    all_profiles = {
+    #profile data
+    }
+    if all_profiles[profile] != None:
+        return all_profiles[profile]
+    else:
+        all_profiles['profile_1']
 
 def get_profile_config(profile):
     profile_config = {
